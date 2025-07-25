@@ -48,7 +48,7 @@ GET /api/incidents
 
 GET /api/feeds
 → Returns available video feed URLs or metadata
-🧪 Example /api/incidents Response:
+Example /api/incidents Response:
 json
 Copy
 Edit
@@ -68,22 +68,22 @@ Edit
     "feedId": "cam2"
   }
 ]
-✨ Optional Scope (Bonus)
-🔸 1. Incident Timeline (Bottom)
+ Optional Scope (Bonus)
+ 1. Incident Timeline (Bottom)
 Horizontal timeline synced with video
 
 Marks for each incident
 
 Clickable to seek video
 
-🔸 2. 3D Frontend Visualization (Extra Credit)
+ 2. 3D Frontend Visualization (Extra Credit)
 Use three.js or react-three-fiber
 
 Display a 3D room with camera cones
 
 Overlay real-time incident zones or bounding boxes
 
-🚀 Next Steps (Want Code?)
+ Next Steps (Want Code?)
 Would you like me to:
 
 Start building the React + Tailwind frontend structure, or
