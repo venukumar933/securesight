@@ -1,0 +1,209 @@
+Suggested Layout (Responsive, Tailwind CSS + React)
+plaintext
+Copy
+Edit
++-------------------------------------------------------------+
+| Navbar                                                     |
++-------------------------------------------------------------+
+|                         |                                   |
+| Incident Player         | Incident List                     |
+| (Left column - 2/3)     | (Right column - 1/3)              |
+|                         |                                   |
++-------------------------------------------------------------+
+| Incident Timeline (Optional)                               |
++-------------------------------------------------------------+
+🔧 Tech Stack
+Frontend: React + Vite + Tailwind CSS
+
+Backend (basic): Node.js (Express) – serves incident data and video metadata
+
+Optional CV Models: Mocked data returned from backend
+
+State Management: React Context or Zustand
+
+✅ Example File Structure
+pgsql
+Copy
+Edit
+secure-sight/
+├── client/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── IncidentPlayer.jsx
+│   │   │   ├── IncidentList.jsx
+│   │   │   └── Timeline.jsx (optional)
+│   │   ├── App.jsx
+│   │   └── main.jsx
+├── server/
+│   ├── index.js
+│   └── data/
+│       └── incidents.json
+✅ Backend API Endpoints
+h
+Copy
+Edit
+GET /api/incidents
+→ Returns JSON of incident list with metadata and timestamps
+
+GET /api/feeds
+→ Returns available video feed URLs or metadata
+🧪 Example /api/incidents Response:
+json
+Copy
+Edit
+[
+  {
+    "id": "1",
+    "type": "Gun Detected",
+    "timestamp": "2025-07-24T13:45:00Z",
+    "thumbnail": "/thumbs/gun1.png",
+    "feedId": "cam1"
+  },
+  {
+    "id": "2",
+    "type": "Unauthorized Access",
+    "timestamp": "2025-07-24T14:10:00Z",
+    "thumbnail": "/thumbs/unauth1.png",
+    "feedId": "cam2"
+  }
+]
+✨ Optional Scope (Bonus)
+🔸 1. Incident Timeline (Bottom)
+Horizontal timeline synced with video
+
+Marks for each incident
+
+Clickable to seek video
+
+🔸 2. 3D Frontend Visualization (Extra Credit)
+Use three.js or react-three-fiber
+
+Display a 3D room with camera cones
+
+Overlay real-time incident zones or bounding boxes
+
+🚀 Next Steps (Want Code?)
+Would you like me to:
+
+Start building the React + Tailwind frontend structure, or
+
+Create the Express backend API and incident mock data, or
+
+##Provide the full MVP code for client + server?
+// SecureSight - Basic Dashboard Implementation (JavaScript)
+// Frontend: React (with minimal Tailwind CSS)
+// Backend: Node.js + Express (mocked incident + feed data)
+
+// ---------------------------
+// Backend (server/index.js)
+// ---------------------------
+
+const express = require('express');
+const cors = require('cors');
+const app = express();
+const PORT = 4000;
+
+app.use(cors());
+
+const incidents = [
+  {
+    id: '1',
+    type: 'Gun Detected',
+    timestamp: '2025-07-24T13:45:00Z',
+    thumbnail: '/thumbs/gun1.png',
+    feedId: 'cam1'
+  },
+  {
+    id: '2',
+    type: 'Unauthorized Access',
+    timestamp: '2025-07-24T14:10:00Z',
+    thumbnail: '/thumbs/unauth1.png',
+    feedId: 'cam2'
+  }
+];
+
+const feeds = [
+  { id: 'cam1', name: 'Entrance Camera', url: '/videos/cam1.mp4' },
+  { id: 'cam2', name: 'Lobby Camera', url: '/videos/cam2.mp4' },
+  { id: 'cam3', name: 'Parking Camera', url: '/videos/cam3.mp4' }
+];
+
+app.get('/api/incidents', (req, res) => res.json(incidents));
+app.get('/api/feeds', (req, res) => res.json(feeds));
+
+app.listen(PORT, () => console.log(Server running on http://localhost:${PORT}));
+
+
+// ---------------------------
+// Frontend (React - App.jsx)
+// ---------------------------
+
+import React, { useState, useEffect } from 'react';
+import './App.css';
+
+function App() {
+  const [feeds, setFeeds] = useState([]);
+  const [incidents, setIncidents] = useState([]);
+  const [selectedFeed, setSelectedFeed] = useState(null);
+
+  useEffect(() => {
+    fetch('http://localhost:4000/api/feeds')
+      .then(res => res.json())
+      .then(setFeeds);
+
+    fetch('http://localhost:4000/api/incidents')
+      .then(res => res.json())
+      .then(setIncidents);
+  }, []);
+
+  const handleFeedChange = (e) => {
+    const feed = feeds.find(f => f.id === e.target.value);
+    setSelectedFeed(feed);
+  };
+
+  return (
+    <div className="flex flex-col h-screen">
+      <nav className="bg-gray-900 text-white px-4 py-3 flex justify-between items-center">
+        <h1 className="text-xl font-bold">SecureSight</h1>
+      </nav>
+      <div className="flex flex-1">
+        <div className="w-2/3 p-4">
+          <select onChange={handleFeedChange} className="mb-4 p-2 border rounded">
+            <option value="">Select a feed</option>
+            {feeds.map(feed => (
+              <option key={feed.id} value={feed.id}>{feed.name}</option>
+            ))}
+          </select>
+          {selectedFeed && (
+            <video controls className="w-full h-auto">
+              <source src={selectedFeed.url} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          )}
+        </div>
+        <div className="w-1/3 p-4 border-l overflow-y-auto">
+          <h2 className="text-lg font-semibold mb-2">Incidents</h2>
+          {incidents.map(incident => (
+            <div key={incident.id} className="mb-4 p-2 border rounded shadow-sm">
+              <p className="font-medium">{incident.type}</p>
+              <p className="text-sm text-gray-500">{new Date(incident.timestamp).toLocaleString()}</p>
+              <img src={incident.thumbnail} alt="snapshot" className="w-full h-32 object-cover mt-2" />
+              <button
+                className="mt-2 bg-blue-600 text-white px-3 py-1 rounded"
+                onClick={() => {
+                  const feed = feeds.find(f => f.id === incident.feedId);
+                  setSelectedFeed(feed);
+                }}
+              >
+                View in Player
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
